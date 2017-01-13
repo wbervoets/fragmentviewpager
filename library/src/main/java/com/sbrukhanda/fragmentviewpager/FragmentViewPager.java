@@ -304,6 +304,11 @@ public class FragmentViewPager extends ViewPager
             mFragmentContainer.setPosition(position);
         }
 
+        @Override
+        public void onPageSelected(int position) {
+            super.onPageSelected(position);
+        }
+
         // *****************************************************************************************
         public void updateCurrentFragmentState(boolean isFragmentVisible) {
 
