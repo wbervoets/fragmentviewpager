@@ -306,7 +306,34 @@ public class FragmentViewPager extends ViewPager
 
         @Override
         public void onPageSelected(int position) {
-            super.onPageSelected(position);
+            // Return if page position has not changed or animating between pages
+            if ((position == mFragmentContainer.getPosition())) return;
+
+            // Notify Fragment pages if this {@code FragmentViewPager} is visible
+            if (mIsPagerVisible) {
+                // Try to notify previously visible Fragment page that is no longer visible
+                Fragment currentFragment = mFragmentContainer.getFragment();
+                if (currentFragment != null) {
+                    notifyFragmentInvisible();
+                }
+
+                // Try to notify newly selected Fragment page that it is visible
+                Fragment selectedFragment = getFragment(position);
+                if (selectedFragment != null) {
+                    // Update state with the newly selected Fragment page
+                    mFragmentContainer.setFragment(selectedFragment);
+
+                    if (selectedFragment.isAdded()) {
+                        // Notify newly selected Fragment page only if it is still attached
+                        notifyFragmentVisible();
+                    } else {
+                        Logger.e(TAG, "Fragment [" + selectedFragment.getClass().getSimpleName() + "] not added.");
+                    }
+                }
+            }
+
+            // Always update state with the latest valid Fragment page position
+            mFragmentContainer.setPosition(position);
         }
 
         // *****************************************************************************************
